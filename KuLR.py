@@ -31,6 +31,30 @@ def process_frame(frame):
     cv2.rectangle(RGB_roi, (0, 0), (width, RGB_roi_top), (255, 255, 255), 3)
     cv2.putText(RGB_roi, 'RGB Detection Zone', (10, RGB_roi_height-160), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
 
+
+    white_roi_height = int(height * 0.13)
+    white_roi_top = height - white_roi_height
+    white_roi = frame[white_roi_top:, :]
+
+    cv2.line(white_roi, (width // 2, 0), (width // 2, white_roi_height), (0, 125, 125), 2)
+
+    hsv_white = cv2.cvtColor(white_roi, cv2.COLOR_BGR2HSV)
+
+    lower_white = np.array([0, 0, 200], dtype=np.uint8)
+    upper_white = np.array([255, 30, 255], dtype=np.uint8)
+    white_mask = cv2.inRange(hsv_white, lower_white, upper_white)
+
+    kernel = np.ones((5,5),np.uint8)
+    white_mask = cv2.morphologyEx(white_mask, cv2.MORPH_OPEN, kernel)
+
+    white_area = cv2.bitwise_and(white_roi, white_roi, mask=white_mask)
+
+    gray = cv2.cvtColor(white_area, cv2.COLOR_BGR2GRAY)
+    _, binary_image = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY)
+
+    white_contours, _ = cv2.findContours(binary_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+
     yellow_roi_height = int(height * 0.13)
     yellow_roi_top = height - yellow_roi_height
     yellow_roi = frame[yellow_roi_top:, :]
@@ -54,16 +78,16 @@ def process_frame(frame):
     yellow_contours, _ = cv2.findContours(binary_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     try:
-        if len(yellow_contours) >= 1 and blueOn == 1:
-            max_yellow_contour = max(yellow_contours, key=cv2.contourArea)
-            cv2.drawContours(yellow_roi, [max_yellow_contour], -1, (0, 255, 0), 2)
+        if len(white_contours) >= 1 and blueOn == 1:
+            max_white_contour = max(white_contours, key=cv2.contourArea)
+            cv2.drawContours(white_roi, [max_white_contour], -1, (0, 255, 0), 2)
 
-            yellowM = cv2.moments(max_yellow_contour)
-            if yellowM["m00"] != 0:
-                ycx = int(yellowM["m10"] / yellowM["m00"])
-                ycy = int(yellowM["m01"] / yellowM["m00"])
+            whiteM = cv2.moments(max_white_contour)
+            if whiteM["m00"] != 0:
+                ycx = int(whiteM["m10"] / whiteM["m00"])
+                ycy = int(whiteM["m01"] / whiteM["m00"])
 
-                cv2.circle(yellow_roi, (ycx, ycy), 5, (0, 0, 255), -1)
+                cv2.circle(white_roi, (wcx, wcy), 5, (0, 0, 255), -1)
 
                 center_line = width // 2
                 bias, straight = 180, 150
