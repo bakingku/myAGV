@@ -54,7 +54,6 @@ def process_frame(frame):
 
     white_contours, _ = cv2.findContours(binary_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-
     yellow_roi_height = int(height * 0.1)
     yellow_roi_top = height - yellow_roi_height
     yellow_roi = frame[yellow_roi_top:, :]
@@ -72,10 +71,10 @@ def process_frame(frame):
 
     yellow_area = cv2.bitwise_and(yellow_roi, yellow_roi, mask=yellow_mask)
 
-    gray = cv2.cvtColor(yellow_area, cv2.COLOR_BGR2GRAY)
-    _, binary_image = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY)
+    gray_yellow = cv2.cvtColor(yellow_area, cv2.COLOR_BGR2GRAY)
+    _, binary_image_yellow = cv2.threshold(gray_yellow, 128, 255, cv2.THRESH_BINARY)
 
-    yellow_contours, _ = cv2.findContours(binary_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    yellow_contours, _ = cv2.findContours(binary_image_yellow, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     try:
         if len(white_contours) >= 1 and greenOn == 1:
@@ -107,6 +106,15 @@ def process_frame(frame):
                 elif center_line + straight < wcx < center_line + bias:
                     print("PAN_RIGHT, wcx:", wcx, ", wcy:", wcy)
                     return "PAN_RIGHT"
+        elif cv2.countNonZero(red_mask) > 0:
+            print("Red detected!")
+            greenOn = 0
+            return "STOP"
+        elif cv2.countNonZero(green_mask) > 0:
+            print("Green detected!")
+            greenOn = 0
+            return "REBOOT"
+        
         elif len(yellow_contours) >= 1 and greenOn == 1 and len(white_contours) == None:
             max_yellow_contour = max(yellow_contours, key=cv2.contourArea)
             cv2.drawContours(yellow_roi, [max_yellow_contour], -1, (0, 255, 0), 2)
@@ -124,14 +132,7 @@ def process_frame(frame):
                     print("Yellow detected!")
                     greenOn = 0
                     return "STOP"
-        elif cv2.countNonZero(red_mask) > 0:
-            print("Red detected!")
-            greenOn = 0
-            return "STOP"
-        elif cv2.countNonZero(green_mask) > 0:
-            print("Green detected!")
-            greenOn = 0
-            return "REBOOT"
+        
     except:
         if greenOn == 1:
             print("None Color")
@@ -150,12 +151,12 @@ def camera_thread():
         if result:
             if result == "LEFT":
                 #agv.counterclockwise_rotation(cs)
-                agv.go_vector(1,0,1)
+                agv.go_vector(1,0,70)
             elif result == "PAN_LEFT":
                 agv.pan_left(ps)
             elif result == "RIGHT":
                 #agv.clockwise_rotation(cs)
-                agv.go_vector(1,0,-1)
+                agv.go_vector(1,0,-70)
             elif result == "PAN_RIGHT":
                 agv.pan_right(ps)
             elif result == "FORWARD":
