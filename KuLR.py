@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
-#from pymycobot.myagv import MyAgv
-from run_on_agv.myagv import MyAgv
+from pymycobot.myagv import MyAgv
+#from run_on_agv.myagv import MyAgv
 import threading
 import time
 
@@ -113,7 +113,7 @@ def process_frame(frame):
             return "STOP"
         elif cv2.countNonZero(green_mask) > 0:
             print("Green detected!")
-            greenOn = 0
+            greenOn = 1
             return "REBOOT"
         
         elif len(yellow_contours) >= 1 and greenOn == 1 and len(white_contours) == None:
@@ -151,17 +151,22 @@ def camera_thread():
         result = process_frame(frame)
         if result:
             if result == "LEFT":
-                agv.counterclockwise_rotation(cs,1)
-                #agv.go_vector(1,0,70,1)
+                agv.counterclockwise_rotation(cs)
+                time.sleep(1)
+                #agv.go_vector(1,0,70)
             elif result == "PAN_LEFT":
                 agv.pan_left(ps,1)
+                time.sleep(1)
             elif result == "RIGHT":
-                agv.clockwise_rotation(cs,1)
-                #agv.go_vector(1,0,-70,1)
+                agv.clockwise_rotation(cs)
+                time.sleep(1)
+                #agv.go_vector(1,0,-70)
             elif result == "PAN_RIGHT":
-                agv.pan_right(ps,1)
+                agv.pan_right(ps)
+                time.sleep(1)
             elif result == "FORWARD":
-                agv.go_ahead(gs,1)
+                agv.go_ahead(gs)
+                time.sleep(1)
             elif result == "BACK":
                 agv.retreat(1)
             elif result == "STOP":
@@ -169,7 +174,8 @@ def camera_thread():
             elif result == "REBOOT":
                 agv.restore()
             elif result == "SLOW":
-                agv.go_ahead(gs-1,1)
+                agv.go_ahead(gs-1)
+                time.sleep(1)
 
         cv2.imshow("Frame", frame)
 
