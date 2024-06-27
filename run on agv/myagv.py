@@ -202,7 +202,7 @@ class MyAgv(DataProcessor):
     #     calibration_parameters(class_name = self.__class__.__name__, direction_1=direction_1, direction_2=direction_2,direction_3=direction_3)
     #     return self._mesg(direction_1, direction_2, direction_3)
     
-    def go_vector(self, x, y, z, timeout=5):
+    def go_vector(self, x, y, z):
         """Control the car to move forward. Send control commands every 100ms. with a default motion time of 5 seconds.
 
         Args:
@@ -210,15 +210,13 @@ class MyAgv(DataProcessor):
             timeout (int): default 5 s.
         """
         # go_speed (int): 129 ~ 255 is forward
-        calibration_parameters(class_name = self.__class__.__name__, x=x, y=y, z=z)
-        self._mesg(128+x, 128+y, 128+z)
-        '''
-        t = time.time()
-        while time.time() - t < timeout:
-            self._mesg(128+go_speed, 128, 128)
-            time.sleep(0.1)
-        self.stop()
-        '''
+        #self._mesg(128+x, 128+y, 128+z)
+
+        # t = time.time()
+        # while time.time() - t < timeout:
+        #     self._mesg(128+x, 128+y, 128+z)
+        #     time.sleep(0.1)
+        # self.stop()
         
     def go_ahead(self, go_speed, timeout=5):
         """Control the car to move forward. Send control commands every 100ms. with a default motion time of 5 seconds.
