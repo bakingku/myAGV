@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
-from pymycobot.myagv import MyAgv
+#from pymycobot.myagv import MyAgv
+from run_on_agv.myagv import MyAgv
 import threading
 import time
 
@@ -150,17 +151,17 @@ def camera_thread():
         result = process_frame(frame)
         if result:
             if result == "LEFT":
-                #agv.counterclockwise_rotation(cs)
-                agv.go_vector(1,0,70)
+                agv.counterclockwise_rotation(cs,1)
+                #agv.go_vector(1,0,70,1)
             elif result == "PAN_LEFT":
-                agv.pan_left(ps)
+                agv.pan_left(ps,1)
             elif result == "RIGHT":
-                #agv.clockwise_rotation(cs)
-                agv.go_vector(1,0,-70)
+                agv.clockwise_rotation(cs,1)
+                #agv.go_vector(1,0,-70,1)
             elif result == "PAN_RIGHT":
-                agv.pan_right(ps)
+                agv.pan_right(ps,1)
             elif result == "FORWARD":
-                agv.go_ahead(gs)
+                agv.go_ahead(gs,1)
             elif result == "BACK":
                 agv.retreat(1)
             elif result == "STOP":
@@ -168,7 +169,7 @@ def camera_thread():
             elif result == "REBOOT":
                 agv.restore()
             elif result == "SLOW":
-                agv.go_ahead(gs-1)
+                agv.go_ahead(gs-1,1)
 
         cv2.imshow("Frame", frame)
 
