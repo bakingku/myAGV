@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 from pymycobot.myagv import MyAgv
-#from run_on_agv.myagv import MyAgv
 import threading
 import time
 
@@ -90,7 +89,7 @@ def process_frame(frame):
                 cv2.circle(white_roi, (wcx, wcy), 5, (0, 0, 0), -1)
 
                 center_line = width // 2
-                bias, straight = 180, 150
+                bias, straight = 100, 50
 
                 if center_line - straight <= wcx <= center_line + straight:
                     print("FORWARD, wcx:",wcx, ", wcy:",wcy)
@@ -115,7 +114,7 @@ def process_frame(frame):
             print("Green detected!")
             greenOn = 1
             return "REBOOT"
-        
+        '''
         elif len(yellow_contours) >= 1 and greenOn == 1 and len(white_contours) == None:
             max_yellow_contour = max(yellow_contours, key=cv2.contourArea)
             cv2.drawContours(yellow_roi, [max_yellow_contour], -1, (0, 255, 0), 2)
@@ -133,7 +132,7 @@ def process_frame(frame):
                     print("Yellow detected!")
                     greenOn = 0
                     return "STOP"
-        
+        '''
     except:
         if greenOn == 1:
             print("None Color")
