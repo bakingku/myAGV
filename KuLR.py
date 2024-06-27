@@ -40,8 +40,8 @@ def process_frame(frame):
 
     hsv_white = cv2.cvtColor(white_roi, cv2.COLOR_BGR2HSV)
 
-    lower_white = np.array([0, 0, 200], dtype=np.uint8)
-    upper_white = np.array([255, 30, 255], dtype=np.uint8)
+    lower_white = np.array([40, 0, 203], dtype=np.uint8)
+    upper_white = np.array([87, 68, 255], dtype=np.uint8)
     white_mask = cv2.inRange(hsv_white, lower_white, upper_white)
 
     kernel = np.ones((5,5),np.uint8)
