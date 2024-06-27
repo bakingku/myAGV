@@ -89,7 +89,7 @@ def process_frame(frame):
                 cv2.circle(white_roi, (wcx, wcy), 5, (0, 0, 0), -1)
 
                 center_line = width // 2
-                bias, straight = 200, 130
+                bias, straight = 80, 50
 
                 if center_line - straight <= wcx <= center_line + straight:
                     print("FORWARD, wcx:",wcx, ", wcy:",wcy)
@@ -151,21 +151,21 @@ def camera_thread():
         if result:
             if result == "LEFT":
                 agv.counterclockwise_rotation(cs)
-                time.sleep(mt)
+                #time.sleep(mt)
                 #agv.go_vector(1,0,70)
             elif result == "PAN_LEFT":
                 agv.pan_left(ps)
-                time.sleep(mt)
+                #time.sleep(mt)
             elif result == "RIGHT":
                 agv.clockwise_rotation(cs)
-                time.sleep(mt)
+                #time.sleep(mt)
                 #agv.go_vector(1,0,-70)
             elif result == "PAN_RIGHT":
                 agv.pan_right(ps)
-                time.sleep(mt)
+                #time.sleep(mt)
             elif result == "FORWARD":
                 agv.go_ahead(gs)
-                time.sleep(mt)
+                #time.sleep(mt)
             elif result == "BACK":
                 agv.retreat(1)
             elif result == "STOP":
@@ -174,7 +174,7 @@ def camera_thread():
                 agv.restore()
             elif result == "SLOW":
                 agv.go_ahead(gs-1)
-                time.sleep(mt)
+                #time.sleep(mt)
 
         cv2.imshow("Frame", frame)
 
@@ -184,15 +184,6 @@ def camera_thread():
             break
         elif key == ord('r'):
             agv.restore()
-
-        '''
-        # 배터리 정보 읽기
-        try:
-            battery_info = agv.get_battery_info()
-            print("Battery Data:", battery_info[0])
-        except Exception:
-            print("Failed to get battery information:", Exception)
-        '''
 
     cap.release()
     cv2.destroyAllWindows()
