@@ -5,7 +5,7 @@ import threading
 import time
 
 agv = MyAgv("/dev/ttyAMA2", 115200)
-cs, ps, gs, mt = 5, 2, 3, 1
+cs, ps, gs, mt = 5, 2, 10, 5
 
 def process_frame(frame):
     height, width, _ = frame.shape
@@ -89,7 +89,7 @@ def process_frame(frame):
                 cv2.circle(white_roi, (wcx, wcy), 5, (0, 0, 0), -1)
 
                 center_line = width // 2
-                bias, straight = 100, 50
+                bias, straight = 200, 130
 
                 if center_line - straight <= wcx <= center_line + straight:
                     print("FORWARD, wcx:",wcx, ", wcy:",wcy)
@@ -151,21 +151,21 @@ def camera_thread():
         if result:
             if result == "LEFT":
                 agv.counterclockwise_rotation(cs)
-                time.sleep(1)
+                time.sleep(mt)
                 #agv.go_vector(1,0,70)
             elif result == "PAN_LEFT":
-                agv.pan_left(ps,1)
-                time.sleep(1)
+                agv.pan_left(ps)
+                time.sleep(mt)
             elif result == "RIGHT":
                 agv.clockwise_rotation(cs)
-                time.sleep(1)
+                time.sleep(mt)
                 #agv.go_vector(1,0,-70)
             elif result == "PAN_RIGHT":
                 agv.pan_right(ps)
-                time.sleep(1)
+                time.sleep(mt)
             elif result == "FORWARD":
                 agv.go_ahead(gs)
-                time.sleep(1)
+                time.sleep(mt)
             elif result == "BACK":
                 agv.retreat(1)
             elif result == "STOP":
@@ -174,7 +174,7 @@ def camera_thread():
                 agv.restore()
             elif result == "SLOW":
                 agv.go_ahead(gs-1)
-                time.sleep(1)
+                time.sleep(mt)
 
         cv2.imshow("Frame", frame)
 
